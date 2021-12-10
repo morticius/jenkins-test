@@ -6,10 +6,15 @@ pipeline {
   }
   agent any
   stages {
+    stage('Show env') {
+       steps {
+          sh 'printenv'
+       }
+    }
     stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+          dockerImage = docker.build registry + ":$BUILD_NUMBER" + "-$GIT_BRANCH"
         }
       }
     }
@@ -24,7 +29,7 @@ pipeline {
     }
     stage('Remove Unused docker image') {
       steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
+        sh "docker rmi $registry:$BUILD_NUMBER-$GIT_BRANCH"
       }
     }
   }
